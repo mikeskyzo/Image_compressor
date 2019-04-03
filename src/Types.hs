@@ -14,6 +14,6 @@ module Types
 -- type CLUSTER = "--\n" COLOR "\n -\n" (POINT COLOR "\n")
 
 type POINT = (Integer, Integer)
-type COLOR = (Integer, Integer, Integer)
+type COLOR = (Double, Double, Double)
 
 type Line = (POINT, COLOR)

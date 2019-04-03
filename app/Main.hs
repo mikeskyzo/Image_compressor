@@ -10,7 +10,7 @@ putUsage = putStrLn "USAGE: ./imageCompressor n e IN\n\n\tn\tnumber of colors in
 putError :: IO()
 putError = putStrLn "Bad arg, -h for more information"
 
-parsArgs :: Integer -> Integer -> String -> IO()
+parsArgs :: Integer -> Float -> String -> IO()
 parsArgs n e filename = do
     fileContent <- readFile filename
     putStrLn (algo n e (parsFile fileContent))
@@ -19,5 +19,5 @@ main :: IO ()
 main = do
     args <- getArgs
     case args of
-        [a, b, c] -> parsArgs (read a :: Integer) (read b :: Integer) c
+        [a, b, c] -> parsArgs (read a :: Integer) (read b :: Float) c
         _ -> putUsage
