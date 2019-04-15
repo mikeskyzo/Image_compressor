@@ -3,6 +3,7 @@ module Main where
 import System.Environment
 import Algo
 import Pars
+import System.Random
 
 putUsage :: IO()
 putUsage = putStrLn "USAGE: ./imageCompressor n e IN\n\n\tn\tnumber of colors in the final image\n\te\tconvergence limit\n\tIN\tpath to the file containing the colors of the pixels"
