@@ -5,8 +5,43 @@ module Algo
 import Types
 import System.Random
 
-algo :: Integer -> Double -> [Line] -> String
-algo _ _ _ = "prout"
+algo :: Integer -> Double -> [LINE] -> String
+algo nb _ _
+    | nb <= 0 = "ERROR : can't have null or negative numbers of clusters"
+    | otherwise = "prout"
+
+-- sortLine :: Integer -> [LINE] -> [CLUSTER]
+-- sortLine nbCluster LINEs = do
+--     clusters <- creatClusters nbCluster
+--     putLinesInClusters clusters lines
+
+putLinesInClusters :: CLUSTERS -> LINES -> [CLUSTER]
+putLinesInClusters c [] = c
+putLinesInClusters clusters (line:l) = putLinesInClusters (putLineInClosestCluster clusters line) l
+
+putLineInClosestCluster :: CLUSTERS -> LINE -> CLUSTERS
+putLineInClosestCluster clusters line = putLineInClusters clusters (closestCluster clusters line) line
+
+putLineInClusters :: CLUSTERS -> COLOR -> LINE -> CLUSTERS
+putLineInClusters c color line = fmap (funct line color) c
+
+funct :: LINE -> COLOR -> CLUSTER -> CLUSTER
+funct line color cluster
+    | (getClusterColor cluster) == color = ((getClusterColor cluster), getClusterLines cluster ++ [line])
+    | otherwise = cluster
+
+getClusterColor :: CLUSTER -> COLOR
+getClusterColor (c, _) = c
+
+getClusterLines :: CLUSTER -> LINES
+getClusterLines (_, l) = l
+
+closestCluster :: CLUSTERS -> LINE -> COLOR
+closestCluster c (_, color) = closeCluster c color (-1, -1, -1)
+    where
+        closeCluster [] _ closestColor = closestColor
+        closeCluster ((co, _):l) line (-1, -1, -1) = closeCluster l line co
+        closeCluster ((co, _):l) line closestColor = closeCluster l line (findClose line closestColor co)
 
 distance :: COLOR -> COLOR -> Double
 distance (x1, y1, z1) (x2, y2, z2) = sqrt (((x2 - x1)^2) + ((y2 - y1)^2) + ((z2 - z1)^2))
@@ -23,12 +58,12 @@ retClose p1 p2 disP1 disP2
     | disP1 < disP2 = p1
     | otherwise = p1
 
-closest :: COLOR -> [COLOR] -> COLOR
-closest point list = loop point list (-1, -1, -1)
-    where
-        loop _ [] c = c
-        loop p (l:end) (-1, -1, -1) = loop p end (findClose p l l)
-        loop p (l:end) c = loop p end (findClose p l c)
+-- closest :: Line -> [CLUSTER] -> [CLUSTER]
+-- closest line list = loop line list []
+--     where
+--         loop _ [] acc = acc
+--         loop p (l:end) (-1, -1, -1) = loop p end (findClose p l l)
+--         loop p (l:end) acc = loop p end (findClose p l acc)
 
 newPoint :: [COLOR] -> COLOR
 newPoint l = calcMoy l (0, 0, 0) 0

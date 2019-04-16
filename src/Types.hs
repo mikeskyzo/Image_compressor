@@ -1,8 +1,10 @@
 module Types
-    (Line,
+    (LINE,
+    LINES,
     POINT,
     COLOR,
-    CLUSTER) where
+    CLUSTER,
+    CLUSTERS) where
 
 -- IN ::= POINT COLOR(’\n’POINT COLOR)*
 -- POINT ::= ’(’Int’,’Int’)’
@@ -17,6 +19,10 @@ module Types
 type POINT = (Integer, Integer)
 type COLOR = (Double, Double, Double)
 
-type Line = (POINT, COLOR)
+type LINE = (POINT, COLOR)
 
-type CLUSTER = (COLOR, [Line])
+type LINES = [LINE]
+
+type CLUSTER = (COLOR, [LINE])
+
+type CLUSTERS = [CLUSTER]
