@@ -4,5 +4,5 @@ module Pars
 
 import Types
 
-parsFile :: String -> [Line]
+parsFile :: String -> [LINE]
 parsFile _ = ((1, 1), (10 ,20 ,30)):[]

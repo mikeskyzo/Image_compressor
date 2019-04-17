@@ -23,6 +23,6 @@ type LINE = (POINT, COLOR)
 
 type LINES = [LINE]
 
-type CLUSTER = (COLOR, [LINE])
+type CLUSTER = (COLOR, LINES)
 
 type CLUSTERS = [CLUSTER]
