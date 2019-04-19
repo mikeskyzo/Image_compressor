@@ -8,7 +8,8 @@ import System.Random
 -- main algo
 algo :: Int -> Double -> LINES -> String
 algo nb convLimit allLines
-    | nb <= 0 = []
+    | nb <= 0 = "ERROR : can't have zero or less clusters\n"
+    | convLimit < 0 = "ERROR : can't have a negative converge's limit\n"
     | otherwise = convertClusterToString (mainLoop nb convLimit allLines)
 
 mainLoop :: Int -> Double -> LINES -> CLUSTERS
