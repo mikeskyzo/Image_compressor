@@ -1,25 +1,34 @@
 module Algo
-    (algo
+    (algo,
     ) where
 
 import Types
 import System.Random
 
 -- main algo
-algo :: Integer -> Double -> LINES -> String
-algo nb _ _
-    | nb <= 0 = "ERROR : can't have null or negative numbers of clusters"
-    | otherwise = do
-        "prout"
+algo :: Int -> Double -> LINES -> String
+algo nb convLimit allLines
+    | nb <= 0 = []
+    | otherwise = convertClusterToString (mainLoop nb convLimit allLines)
+
+mainLoop :: Int -> Double -> LINES -> CLUSTERS
+mainLoop nbCluster e l = do
+    let clus = sortLine nbCluster l
+    loopIt clus l e (putLinesInClusters (changeCluster clus) l)
+        where
+            loopIt oldClusters allLines convergeLimit newClusters
+                | (isConverge oldClusters newClusters convergeLimit) == True = newClusters
+                | otherwise = loopIt newClusters allLines convergeLimit (putLinesInClusters (changeCluster newClusters) allLines)
+
 
 -- Sort all lines in closest clusters
 
 sortLine :: Int -> LINES -> CLUSTERS
-sortLine nbCluster lines = do
+sortLine nbCluster allLines = do
     let clusters = creatClusters nbCluster
-    putLinesInClusters clusters lines
+    putLinesInClusters clusters allLines
 
-putLinesInClusters :: CLUSTERS -> LINES -> [CLUSTER]
+putLinesInClusters :: CLUSTERS -> LINES -> CLUSTERS
 putLinesInClusters c [] = c
 putLinesInClusters clusters (line:l) = putLinesInClusters (putLineInClosestCluster clusters line) l
 
@@ -50,7 +59,7 @@ putLineInClusters c color line = fmap (findClusters line color) c
 
 findClusters :: LINE -> COLOR -> CLUSTER -> CLUSTER
 findClusters line color cluster
-    | (getClusterColor cluster) == color = ((getClusterColor cluster), getClusterLines cluster ++ [line])
+    | (getClusterColor cluster) == color = ((getClusterColor cluster), (getClusterLines cluster) ++ [line])
     | otherwise = cluster
 
 getClusterColor :: CLUSTER -> COLOR
@@ -64,10 +73,13 @@ getClusterLines (_, l) = l
 distance :: COLOR -> COLOR -> Double
 distance (x1, y1, z1) (x2, y2, z2) = sqrt (((x2 - x1)^2) + ((y2 - y1)^2) + ((z2 - z1)^2))
 
-convergence :: COLOR -> COLOR -> Double -> Bool
-convergence a b convLimit
-    | (distance a b) < convLimit = True
-    | otherwise = False
+-- Check if two clusters converging according to the convergence limit given as parameter
+isConverge :: CLUSTERS -> CLUSTERS -> Double -> Bool
+isConverge [] _ _ = False
+isConverge _ [] _ = False
+isConverge ((c1, _):l1) ((c2, _):l2) convergeLimit
+    | (distance c1 c2) < convergeLimit = True
+    | otherwise = isConverge l1 l2 convergeLimit
 
 
 -- Clusters funct (create, calc new cluster)
@@ -84,12 +96,24 @@ creatClusters nb = createIt nb []
 changeCluster :: CLUSTERS -> CLUSTERS
 changeCluster clusters = fmap changePointCluster clusters
 
+-- Change the point of one cluster according to these lines
 changePointCluster :: CLUSTER -> CLUSTER
-changePointCluster (c, lines) = ((newPoint lines), [])
+changePointCluster (c, []) = (c, [])
+changePointCluster (_, clusterlines) = ((newPoint clusterlines), [])
 
-
+-- Calculate a new point according to the LINES
 newPoint :: LINES -> COLOR
-newPoint lines = calcMoy lines (0, 0, 0) 0
+newPoint clusterLines = calcMoy clusterLines (0, 0, 0) 0
     where
         calcMoy [] (r, g, b) acc = (r / acc, g / acc, b / acc)
         calcMoy ((_,(r, g, b)):list) (r1, g1, b1) acc = calcMoy list ((r + r1), (g + g1), (b + b1)) (acc + 1)
+
+
+-- Convert the Clusters and there lines in String
+convertClusterToString :: CLUSTERS -> String
+convertClusterToString clusters = loopCluster clusters ""
+    where
+        loopCluster [] s = s
+        loopCluster (((a, b, c), clusterLines):l) s = loopCluster l (s ++ "--\n(" ++ (show a) ++ "," ++ (show b) ++ "," ++ (show c) ++ ")\n-\n" ++ (addLines clusterLines ""))
+        addLines [] s = s
+        addLines (((x, y), (a, b, c)):l) s = addLines l (s ++ "(" ++ (show x) ++ "," ++ (show y) ++ ") (" ++ (show a) ++ "," ++ (show b) ++ "," ++ (show c) ++ ")\n")
