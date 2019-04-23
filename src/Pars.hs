@@ -5,4 +5,12 @@ module Pars
 import Types
 
 parsFile :: String -> [LINE]
-parsFile _ = ((1, 1), (10 ,20 ,30)):[]
+parsFile file = do
+    let lines = split file '\n'
+    loop line []
+        where
+            loop [] acc = acc
+            loop (line:l) acc = loop l (acc ++ (decrypt line))
+
+decrypt :: String -> LINE
+decrypt line = ((getPoint line), (getColor line))
