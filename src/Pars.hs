@@ -4,32 +4,49 @@ module Pars
 
 import Types
 
-parsFile :: String -> [LINE]
+parsFile :: String -> LINES
 parsFile file = do
-    let lines = split '\n' file
-    loop lines []
+    let allLines = split '\n' file
+    loop allLines []
         where
             loop [] acc = acc
             loop (line:l) acc = loop l (acc ++ [(decrypt line)])
 
+getNelem :: [String] -> Int -> String
+getNelem l n
+    | n < 0 = "0"
+    | (length l) < (n - 1) = "0"
+    | otherwise = l !! n
+
+getNelemPoint :: [String] -> Int -> String
+getNelemPoint l n
+    | n < 0 = "(0,0)"
+    | (length l) < (n - 1) = "(0,0)"
+    | otherwise = l !! n
+
+getNelemColor :: [String] -> Int -> String
+getNelemColor l n
+    | n < 0 = "(0,0,0)"
+    | (length l) < (n - 1) = "(0,0,0)"
+    | otherwise = l !! n
+
 decrypt :: String -> LINE
 decrypt line = do
-    let lines = split ' ' line
-    ((getPoint (lines !! 0)), (getColor (lines !! 1)))
+    let allLines = split ' ' line
+    ((getPoint (getNelemPoint allLines 0)), (getColor (getNelemColor allLines 1)))
 
 getPoint :: String -> POINT
 getPoint line = do
-    let lineParsedList = split ',' (removeBracket (removeBracket line '(') ')')
-
-    (read (lineParsedList !! 0) :: Integer, read (lineParsedList !! 1) :: Integer)
+    let lineParsedList = split ',' (removeChar (removeChar line '(') ')')
+    (read (getNelem lineParsedList 0) :: Integer, read (getNelem lineParsedList 1) :: Integer)
 
 getColor :: String -> COLOR
 getColor line = do
-    let lineParsedList = split ',' (removeBracket (removeBracket line '(') ')')
-    (read (lineParsedList !! 0) :: Double, read (lineParsedList !! 1) :: Double, read (lineParsedList !! 2) :: Double)
+    let lineParsedList = split ',' (removeChar (removeChar line '(') ')')
+    (read (getNelem lineParsedList 0) :: Double, read (getNelem lineParsedList 1) :: Double, read (getNelem lineParsedList 2) :: Double)
 
-removeBracket :: String -> Char -> String
-removeBracket str delimiter = loopIt str delimiter []
+removeChar :: String -> Char -> String
+removeChar str delimiter = loopIt str delimiter []
     where
         loopIt [] _ acc = acc
         loopIt (c:l) delim acc

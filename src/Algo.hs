@@ -72,7 +72,7 @@ getClusterLines (_, l) = l
 
 -- Distance funct
 distance :: COLOR -> COLOR -> Double
-distance (x1, y1, z1) (x2, y2, z2) = sqrt (((x2 - x1)^2) + ((y2 - y1)^2) + ((z2 - z1)^2))
+distance (x1, y1, z1) (x2, y2, z2) = sqrt (((x2 - x1)**2) + ((y2 - y1)**2) + ((z2 - z1)**2.0))
 
 -- Check if two clusters converging according to the convergence limit given as parameter
 isConverge :: CLUSTERS -> CLUSTERS -> Double -> Bool
@@ -117,4 +117,7 @@ convertClusterToString clusters = loopCluster clusters ""
         loopCluster [] s = s
         loopCluster (((a, b, c), clusterLines):l) s = loopCluster l (s ++ "--\n(" ++ (show a) ++ "," ++ (show b) ++ "," ++ (show c) ++ ")\n-\n" ++ (addLines clusterLines ""))
         addLines [] s = s
-        addLines (((x, y), (a, b, c)):l) s = addLines l (s ++ "(" ++ (show x) ++ "," ++ (show y) ++ ") (" ++ (show a) ++ "," ++ (show b) ++ "," ++ (show c) ++ ")\n")
+        addLines (((x, y), (a, b, c)):l) s = addLines l (s ++ "(" ++ (show x) ++ "," ++ (show y) ++ ") (" ++ (show (toInt a)) ++ "," ++ (show (toInt b)) ++ "," ++ (show (toInt c)) ++ ")\n")
+
+toInt :: Double -> Int
+toInt i = round i
