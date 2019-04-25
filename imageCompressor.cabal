@@ -42,7 +42,7 @@ library
       -Wall
       -fwarn-tabs
       -fwarn-incomplete-uni-patterns
-      --fwarn-incomplete-reccord-update
+      -fwarn-incomplete-record-updates
 
 executable imageCompressor-exe
   main-is: Main.hs
